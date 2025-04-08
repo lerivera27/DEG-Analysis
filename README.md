@@ -13,15 +13,19 @@
 
 # DESeq2 Installation in R: 
 ``` 
+
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 BiocManager::install("DESeq2") 
+
 ```
 
 ## Set the working directory: 
 ``` 
+
 setwd("/scratch/leiarar/BRCA-deg-analysis") #information to be used as an example! 
+
 
 ```
 
@@ -141,7 +145,10 @@ if (length(results_list) > 0) {
 }
 ```
 # Run the analysis (output_file = 'BRCA-deg-analysis.tsv'): 
-```main("breast-gtex-tcga-clean.csv", "breast-gtex-tcga.comparison.csv", "BRCA-deg-analysis.tsv")```
+```
+main("breast-gtex-tcga-clean.csv", "breast-gtex-tcga.comparison.csv", "BRCA-deg-analysis.tsv")
+
+```
 
 
 
