@@ -1,17 +1,17 @@
 # DEG-Analysis-Lab
-# Task: Finding Differentially Expressed Genes (DEGs), specifically analyzing BLCA to identify genes with significant expression changes between normal and tumorous tissue. 
+# Task: Finding Differentially Expressed Genes (DEGs), specifically analyzing BRCA to identify genes with significant expression changes between normal and tumorous tissue. 
 
 ## Objective: Use the DESeq2 R package within the R-Studio environment to identify DEGs between normal GTEX and tumor TCGA RNA-Seq profiles in a gene expression matrix (GEM). 
 
 
 ## Upon running the DESeq2, the following steps must be conducted: 
 1. Start by setting up the DESeq2 package in your Linux environment. 
-2. Download RNA-seq data for both normal and tumor for your desired cancer subset (we will use BLCA-bladder tissue samples). 
+2. Download RNA-seq data for both normal and tumor for your desired cancer subset (we will use BRCA-breast tissue samples). 
     a. Then, process and combine them into a single Gene Expression Matrix (GEM) for analysis. 
 3. Set up a comparison matrix to clearly define normal vs. tumor. 
 
 
-# DESeq2 Installation in R: 
+## Step 1: DESeq2 Installation in R: 
 ``` 
 
 if (!require("BiocManager", quietly = TRUE))
@@ -21,7 +21,7 @@ BiocManager::install("DESeq2")
 
 ```
 
-## Set the working directory: 
+## Step 2: Set the working directory: 
 ``` 
 
 setwd("/scratch/leiarar/BRCA-deg-analysis") #information to be used as an example! 
@@ -45,8 +45,8 @@ To execute the DEG analysis, follow these steps:
 5. The output file 'breast-gtex-tcga-degs.csv' will be generated containing all the differentially expressed results of the two conditions: normal vs. tumor for BRCA. 
 
 
-# Extract Data and Run DESeq2 
-## Extract a sub-matrix of counts for each group: 
+## Step 3: Extract Data and Run DESeq2 
+### Extract a sub-matrix of counts for each group: 
 ```
 subgem <- function(gem, anot, group) {
   group_samples <- subset(anot, Comparison == group)$Sample
@@ -61,13 +61,13 @@ subgem <- function(gem, anot, group) {
 }
 ```
 
-## Extract a subset of the sample annotation matrix for each group:
+### Extract a subset of the sample annotation matrix for each group:
 ```
 subanot <- function(anot, group) {
   return(subset(anot, Comparison == group))
 }
 ```
-# Run DESeq2 and return DEG stats & normalized expression: 
+### Run DESeq2 and return DEG stats & normalized expression: 
 ``` 
 run_deseq <- function(counts, annotation) {
   annotation <- annotation[!duplicated(annotation$Sample), ]
@@ -85,13 +85,13 @@ run_deseq <- function(counts, annotation) {
   res_df$GeneID <- rownames(res_df)
 ```
 
-  # Get normalized counts (FPM):
+  ### Get normalized counts (FPM):
  ```
 norm <- as.data.frame(fpm(dds))
   norm$GeneID <- rownames(norm)
   ```
 
-  # Merge columns and specify their specific headers: 
+  ### Merge columns and specify their specific headers: 
 ```
 combined <- merge(res_df, norm, by = "GeneID")
   combined <- combined[, c("GeneID", "log2FoldChange", "lfcSE", "stat", "pvalue", "padj",
@@ -99,7 +99,7 @@ combined <- merge(res_df, norm, by = "GeneID")
   return(combined)
 }
 ```
-## Main defines the input functions 'gene_counts_file', 'sample_annotation_file', 'output_file': 
+### Main defines the input functions 'gene_counts_file', 'sample_annotation_file', 'output_file': 
 ```
 main <- function(gene_counts_file, sample_annotation_file, output_file) {         #three input arguments are gene_counts_file, sample_annotation_file, and deseq_results_file
   message("Reading count matrix...")
@@ -131,7 +131,7 @@ main <- function(gene_counts_file, sample_annotation_file, output_file) {       
     results_list[[group]] <- res_sorted
   }
 ```
-  # Combine all group results for processing of the data: 
+  ### Combine all group results for processing of the data: 
 ```
 if (length(results_list) > 0) {
     all_results <- do.call(rbind, results_list)
@@ -144,14 +144,13 @@ if (length(results_list) > 0) {
   return(invisible(results_list))
 }
 ```
-# Run the analysis (output_file = 'BRCA-deg-analysis.tsv'): 
+## Step 4:  Run the analysis (output_file = 'BRCA-deg-analysis.tsv'): 
 ```
 main("breast-gtex-tcga-clean.csv", "breast-gtex-tcga.comparison.csv", "BRCA-deg-analysis.tsv")
 
 ```
 
-
-
+## Step 5: Analyze results
 
 ## License - this project is licensed under the MIT License.
 
